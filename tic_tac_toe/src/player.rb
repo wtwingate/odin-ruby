@@ -27,6 +27,6 @@ class Player
   private
 
   def valid_input?(choice)
-    choice =~ /[1-9]/
+    choice =~ /^[1-9]$/
   end
 end
