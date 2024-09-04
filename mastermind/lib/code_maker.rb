@@ -12,15 +12,37 @@ class CodeMaker < Player
     @secret_code = make_secret_code
   end
 
-  def secret_code_broken?(guesses)
-    @secret_code = guesses
+  def solved?(guesses)
+    @secret_code == guesses
   end
 
-  def give_hints(guesses); end
+  def give_hints(guesses)
+    {
+      full: count_full_matches(guesses),
+      half: count_half_matches(guesses)
+    }
+  end
 
   private
 
   def make_secret_code
     Array.new(4) { Constants::COLORS.sample }
+  end
+
+  def count_full_matches(guesses)
+    zipped = @secret_code.zip(guesses)
+    zipped.select { |pair| pair[0] == pair[1] }.count
+  end
+
+  def count_half_matches(guesses)
+    zipped = @secret_code.zip(guesses)
+    partial_code, partial_guesses = zipped.filter { |z| z[0] != z[1] }.transpose
+
+    # these variables are nil when all guesses are correct
+    return 0 if partial_code.nil? || partial_guesses.nil?
+
+    partial_code.count do |color|
+      partial_guesses.include? color
+    end
   end
 end
