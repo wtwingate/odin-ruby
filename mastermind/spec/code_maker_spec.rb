@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require './lib/code_maker'
 
 describe CodeMaker do
-  let(:code_maker) { CodeMaker.new }
+  let(:code_maker) { described_class.new }
 
   describe '#code_broken?' do
     it 'returns false if guess is wrong' do
