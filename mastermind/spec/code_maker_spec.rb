@@ -1,17 +1,17 @@
 require './lib/code_maker'
 
 describe CodeMaker do
-  let(:code_maker) { CodeMaker.new('test') }
+  let(:code_maker) { CodeMaker.new }
 
-  describe '#solved?' do
+  describe '#code_broken?' do
     it 'returns false if guess is wrong' do
       code_maker.instance_variable_set(:@secret_code, %w[R R R R])
-      expect(code_maker.solved?(%w[B B B B])).to be false
+      expect(code_maker.code_broken?(%w[B B B B])).to be false
     end
 
     it 'returns true if guess is correct' do
       code_maker.instance_variable_set(:@secret_code, %w[R R R R])
-      expect(code_maker.solved?(%w[R R R R])).to be true
+      expect(code_maker.code_broken?(%w[R R R R])).to be true
     end
   end
 
