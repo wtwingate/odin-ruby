@@ -22,16 +22,34 @@ describe CodeMaker do
       expect(code_maker.give_hints(guesses)).to eq({ full: 0, half: 0 })
     end
 
-    it 'returns four full matches if all guesses have correct color and position' do
+    it 'identifies four full matches if all guesses have correct color and position' do
       code_maker.instance_variable_set(:@secret_code, %w[R R R R])
       guesses = %w[R R R R]
       expect(code_maker.give_hints(guesses)).to eq({ full: 4, half: 0 })
     end
 
-    it 'returns four half matches if all guesses have correct color but wrong position' do
+    it 'identifies four half matches if all guesses have correct color but wrong position' do
       code_maker.instance_variable_set(:@secret_code, %w[R G B C])
       guesses = %w[C B G R]
       expect(code_maker.give_hints(guesses)).to eq({ full: 0, half: 4 })
+    end
+
+    it 'identifies only one full match if same color is guessed repeatedly' do
+      code_maker.instance_variable_set(:@secret_code, %w[R G B C])
+      guesses = %w[R R R R]
+      expect(code_maker.give_hints(guesses)).to eq({ full: 1, half: 0 })
+    end
+
+    it 'identifies only one half match if same color is guessed repeatedly' do
+      code_maker.instance_variable_set(:@secret_code, %w[R G G G])
+      guesses = %w[B R R R]
+      expect(code_maker.give_hints(guesses)).to eq({ full: 0, half: 1 })
+    end
+
+    it 'identifies combinations of full and half matches' do
+      code_maker.instance_variable_set(:@secret_code, %w[R G B R])
+      guesses = %w[R B G R]
+      expect(code_maker.give_hints(guesses)).to eq({ full: 2, half: 2 })
     end
   end
 end
