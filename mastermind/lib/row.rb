@@ -2,6 +2,8 @@
 
 require_relative 'constants'
 
+# This class represents a single row of guesses and hints on the
+# game board.
 class Row
   def initialize(guess, hints)
     @guess = guess

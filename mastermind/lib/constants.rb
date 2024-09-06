@@ -2,6 +2,8 @@
 
 require 'colorize'
 
+# This module provides constants to be used throughout the rest of
+# the program.
 module Constants
   COLORS = %w[R G B C M Y].freeze
 

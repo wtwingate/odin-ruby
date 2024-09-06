@@ -2,6 +2,8 @@
 
 require_relative 'row'
 
+# This class represents the state of the game board and provides
+# a method to draw it to the console.
 class Board
   def initialize
     @rows = []
@@ -16,9 +18,7 @@ class Board
       print "\n"
     end
 
-    @rows.reverse.each do |row|
-      row.draw
-    end
+    @rows.reverse.each(&:draw)
   end
 
   def update(guess, hints)

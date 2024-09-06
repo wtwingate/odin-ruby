@@ -6,9 +6,10 @@ require_relative 'board'
 require_relative 'code_maker'
 require_relative 'code_breaker'
 
+# This class represents the game of Mastermind. It is responsible
+# for initializing the game and all of its objects, and for
+# executing the main game loop.
 class Mastermind
-  attr_accessor :board, :code_maker, :code_breaker
-
   def initialize
     @board = Board.new
     @code_maker = CodeMaker.new
@@ -31,8 +32,7 @@ class Mastermind
   private
 
   def game_start
-    print "\n\n"
-    print "\t\t"
+    print "\n\n\t\t"
     print '*'.colorize(color: :red, mode: :bold)
     print '*'.colorize(color: :blue, mode: :bold)
     print '*'.colorize(color: :green, mode: :bold)
