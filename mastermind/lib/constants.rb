@@ -13,4 +13,9 @@ module Constants
     'M' => 'M'.colorize(color: :magenta, mode: :bold),
     'Y' => 'Y'.colorize(color: :yellow, mode: :bold)
   }.freeze
+
+  HINTS = {
+    full: '*'.colorize(color: :red, mode: :bold),
+    half: '*'.colorize(color: :yellow, mode: :bold)
+  }.freeze
 end

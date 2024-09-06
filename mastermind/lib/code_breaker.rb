@@ -21,6 +21,6 @@ class CodeBreaker
   end
 
   def valid_guess?(input)
-    input.all? { |c| Constants::COLORS.include? c }
+    input.length == 4 && input.all? { |c| Constants::COLORS.include? c }
   end
 end

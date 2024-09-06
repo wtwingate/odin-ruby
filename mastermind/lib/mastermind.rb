@@ -22,7 +22,7 @@ class Mastermind
       guess = @code_breaker.guess
       hints = @code_maker.give_hints(guess)
       @board.update(guess, hints)
-      @board.print
+      @board.draw
 
       break if game_over?(guess)
     end
@@ -42,7 +42,7 @@ class Mastermind
     print '*'.colorize(color: :yellow, mode: :bold)
     print "\n\n"
 
-    @board.print
+    @board.draw
   end
 
   def game_over?(guess)
