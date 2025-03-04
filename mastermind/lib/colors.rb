@@ -2,6 +2,7 @@
 
 require 'colorize'
 
+# This module contains colorful constants used by other classes.
 module Colors
   SYMBOLS = %i[red green blue cyan magenta yellow].freeze
 

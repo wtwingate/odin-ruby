@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# This class implements the Mastermind game board.
 class Board
   def initialize(secret)
     @size = 12
@@ -63,16 +66,13 @@ class Board
   def format_guess(guess)
     return '|   |   |   |   |' if guess.nil?
 
-    formatted = '|'
-    guess.each { |item| formatted << " #{Colors::DISPLAY[item]} |" }
-    formatted
+    segments = guess.map { |item| " #{Colors::DISPLAY[item]} |" }
+    "|#{segments.join}"
   end
 
   def format_hint(hint)
     return '' if hint.nil?
 
-    formatted = ''
-    hint.each { |item| formatted << Colors::DISPLAY[item] }
-    formatted
+    hint.map { |item| Colors::DISPLAY[item] }.join
   end
 end
