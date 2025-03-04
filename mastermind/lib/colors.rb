@@ -22,7 +22,16 @@ module Colors
     cyan: 'C'.colorize(color: :cyan, mode: :bold),
     magenta: 'M'.colorize(color: :magenta, mode: :bold),
     yellow: 'Y'.colorize(color: :yellow, mode: :bold),
-    full: '•'.colorize(:default),
-    half: '•'.colorize(:gray)
+    full: '•'.colorize(color: :default, mode: :bold),
+    half: '•'.colorize(color: :gray, mode: :bold)
+  }.freeze
+
+  NAMES = {
+    red: 'Red'.colorize(color: :red, mode: :bold),
+    green: 'Green'.colorize(color: :green, mode: :bold),
+    blue: 'Blue'.colorize(color: :blue, mode: :bold),
+    cyan: 'Cyan'.colorize(color: :cyan, mode: :bold),
+    magenta: 'Magenta'.colorize(color: :magenta, mode: :bold),
+    yellow: 'Yellow'.colorize(color: :yellow, mode: :bold)
   }.freeze
 end

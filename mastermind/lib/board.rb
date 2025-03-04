@@ -2,11 +2,13 @@
 
 # This class implements the Mastermind game board.
 class Board
-  def initialize(secret)
-    @size = 12
-    @guesses = Array.new(@size)
-    @hints = Array.new(@size)
+  attr_reader :size, :guesses, :hints
+
+  def initialize(size, secret)
+    @size = size
     @secret = secret
+    @guesses = Array.new(size)
+    @hints = Array.new(size)
     @next = 0
   end
 
@@ -15,15 +17,6 @@ class Board
     hint = generate_hint(guess)
     @hints[@next] = hint
     @next += 1
-  end
-
-  def render
-    formatted_rows = []
-    @size.times do |index|
-      formatted_rows << format_row(index)
-    end
-
-    puts formatted_rows.reverse
   end
 
   private
@@ -55,24 +48,5 @@ class Board
     end
 
     half_matches
-  end
-
-  def format_row(index)
-    guess = format_guess(@guesses[index])
-    hint = format_hint(@hints[index])
-    "#{guess} #{hint}"
-  end
-
-  def format_guess(guess)
-    return '|   |   |   |   |' if guess.nil?
-
-    segments = guess.map { |item| " #{Colors::DISPLAY[item]} |" }
-    "|#{segments.join}"
-  end
-
-  def format_hint(hint)
-    return '' if hint.nil?
-
-    hint.map { |item| Colors::DISPLAY[item] }.join
   end
 end

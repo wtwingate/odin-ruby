@@ -2,70 +2,54 @@
 
 # This class implements the Mastermind gameplay loop.
 class Game
-  def initialize
+  def initialize(size)
+    @size = size
     @secret = random_secret
-    @board = Board.new(@secret)
-    @guess = nil
+    @board = Board.new(size, @secret)
+    @display = Display.new(@board)
     @turn = 0
+    @guess = nil
   end
 
   def play
-    until game_over?
-      render
+    @display.game_start
+
+    until over?
+      @display.game_loop
       @guess = player_input
       @board.update(@guess)
       @turn += 1
     end
 
-    game_over_message
+    @display.game_over(won?, @secret)
   end
 
   private
 
-  def render
-    @board.render
-  end
-
-  def game_won?
+  def won?
     @guess == @secret
   end
 
-  def game_over?
-    game_won? || @turn == 12
+  def over?
+    won? || @turn == @size
   end
 
   def player_input
     loop do
-      puts 'Enter your guess:'
+      @display.input_prompt
       input = gets.chomp.upcase.chars
 
-      next unless input.length == 4 && input.all? do |char|
-        Colors::INPUT.include?(char)
-      end
+      next unless valid?(input)
 
       return input.map { |char| Colors::INPUT[char] }
     end
   end
 
+  def valid?(input)
+    input.length == 4 && input.all? { |char| Colors::INPUT.include?(char) }
+  end
+
   def random_secret
-    secret = []
-    4.times { secret << Colors::SYMBOLS.sample }
-    secret
-  end
-
-  def game_over_message
-    render
-
-    if game_won?
-      puts 'Congrats! You cracked the secret code!'
-    else
-      puts 'Sorry! You ran out of guesses!'
-    end
-
-    puts "The secret code was #{show_secret}"
-  end
-
-  def show_secret
-    @secret.map { |item| Colors::DISPLAY[item] }.join
+    Array.new(4) { Colors::SYMBOLS.sample }
   end
 end
