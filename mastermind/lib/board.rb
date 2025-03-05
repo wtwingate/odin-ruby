@@ -22,8 +22,7 @@ class Board
   private
 
   def generate_hint(guess)
-    full_matches = count_full_matches(guess)
-    half_matches = count_half_matches(guess) - full_matches
+    full_matches, half_matches = count_matches(guess)
 
     hint = []
     full_matches.times { hint << :full }
@@ -32,21 +31,24 @@ class Board
     hint
   end
 
-  def count_full_matches(guess)
+  # rubocop: disable Metrics/MethodLength
+  def count_matches(guess)
+    secret_counts = @secret.tally(Hash.new(0))
+    guess_counts = guess.tally(Hash.new(0))
+
     full_matches = 0
     guess.each_with_index do |color, index|
-      full_matches += 1 if @secret[index] == color
+      if @secret[index] == color
+        full_matches += 1
+        secret_counts[color] -= 1
+      end
     end
 
-    full_matches
-  end
-
-  def count_half_matches(guess)
-    half_matches = 0
-    guess.each do |color|
-      half_matches += 1 if @secret.include? color
+    half_matches = guess_counts.keys.reduce(0) do |sum, color|
+      sum + [secret_counts[color], guess_counts[color]].min
     end
 
-    half_matches
+    [full_matches, half_matches]
   end
+  # rubocop: enable Metrics/MethodLength
 end
