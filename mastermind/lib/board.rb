@@ -16,4 +16,12 @@ class Board
     @hints[@next] = hint
     @next += 1
   end
+
+  def last_guess
+    @guesses[@next - 1]
+  end
+
+  def last_hint
+    @hints[@next - 1]
+  end
 end

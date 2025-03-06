@@ -4,33 +4,32 @@
 class Game
   include Formatter
 
-  def initialize(size)
-    @size = size
-    @board = Board.new(size)
-    @code_maker = Human.new
-    @code_breaker = Human.new
+  def initialize(code_maker, code_breaker)
+    @size = 12
+    @board = Board.new(@size)
+    @code_maker = code_maker
+    @code_breaker = code_breaker
     @secret = @code_maker.secret
-    @guess = nil
     @turn = 0
   end
 
   def play
-    start_screen
-
     until over?
       puts format_board
-      @guess = @code_breaker.guess
-      @board.update(@guess, give_hint)
+      guess = @code_breaker.guess(@board)
+      hint = @code_maker.hint(guess, @secret)
+      @board.update(guess, hint)
       @turn += 1
     end
 
+    puts format_board
     end_screen
   end
 
   private
 
   def won?
-    @guess == @secret
+    @board.last_guess == @secret
   end
 
   def over?
@@ -42,63 +41,18 @@ class Game
   end
 
   def give_hint
-    full_matches, half_matches = count_matches
-
-    ([:full] * full_matches) + ([:half] * half_matches)
-  end
-
-  # rubocop: disable Metrics/MethodLength
-  def count_matches
-    full_matches = 0
-    half_matches = 0
-    secret_counts = Hash.new(0)
-
-    # Count full matches and build hash of remaining secret colors
-    @secret.each_with_index do |color, index|
-      if @guess[index] == color
-        full_matches += 1
-      else
-        secret_counts[color] += 1
-      end
-    end
-
-    # Count half matches from guess positions that weren't a full match
-    @guess.each_with_index do |color, index|
-      next if @secret[index] == color # Skip full matches
-
-      unless secret_counts[color].zero?
-        half_matches += 1
-        secret_counts[color] -= 1
-      end
-    end
-
-    [full_matches, half_matches]
-  end
-  # rubocop: enable Metrics/MethodLength
-
-  def start_screen
-    puts <<~HEREDOC
-      *** MASTERMIND ***
-
-      The object of this game is to deduce the secret code before running
-      out of guesses. The code is a random configuration of four colors.
-      The possible colors are #{format_color_names}.
-
-      After each guess, you'll receive feedback in the form of colored pegs:
-        - #{Color::HINTS[:full]} indicates a peg with the correct color in the correct position.
-        - #{Color::HINTS[:half]} indicates a peg with the correct color in the wrong position.
-
-      You have #{@board.size} guesses to crack the code. Good luck!
-    HEREDOC
+    compare
   end
 
   def end_screen
-    puts format_board
-
-    if won?
+    if won? && @code_breaker.is_a?(Human)
       puts 'Congrats! You cracked the secret code!'
-    else
+    elsif won? && @code_breaker.is_a?(Computer)
+      puts 'Dangit! Your secret code was cracked!'
+    elsif @code_breaker.is_a?(Human)
       puts 'Sorry! You ran out of guesses!'
+    elsif @code_breaker.is_a?(Computer)
+      puts 'Wow! This is literally impossible!'
     end
 
     puts "The secret code was #{format_secret(@secret)}"

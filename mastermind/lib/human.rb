@@ -6,7 +6,7 @@ require_relative 'player'
 class Human < Player
   include Formatter
 
-  def guess
+  def guess(_board)
     puts "Enter your guess (#{format_color_letters}):"
     input
   end
