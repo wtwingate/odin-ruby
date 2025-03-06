@@ -6,12 +6,12 @@ class Game
 
   def initialize(size)
     @size = size
+    @board = Board.new(size)
     @code_maker = Human.new
     @code_breaker = Human.new
     @secret = @code_maker.secret
-    @board = Board.new(size)
-    @turn = 0
     @guess = nil
+    @turn = 0
   end
 
   def play
@@ -44,28 +44,32 @@ class Game
   def give_hint
     full_matches, half_matches = count_matches
 
-    hint = []
-    full_matches.times { hint << :full }
-    half_matches.times { hint << :half }
-
-    hint
+    ([:full] * full_matches) + ([:half] * half_matches)
   end
 
   # rubocop: disable Metrics/MethodLength
   def count_matches
-    secret_counts = @secret.tally(Hash.new(0))
-    guess_counts = @guess.tally(Hash.new(0))
-
     full_matches = 0
-    @guess.each_with_index do |color, index|
-      if @secret[index] == color
+    half_matches = 0
+    secret_counts = Hash.new(0)
+
+    # Count full matches and build hash of remaining secret colors
+    @secret.each_with_index do |color, index|
+      if @guess[index] == color
         full_matches += 1
-        secret_counts[color] -= 1
+      else
+        secret_counts[color] += 1
       end
     end
 
-    half_matches = guess_counts.keys.reduce(0) do |sum, color|
-      sum + [secret_counts[color], guess_counts[color]].min
+    # Count half matches from guess positions that weren't a full match
+    @guess.each_with_index do |color, index|
+      next if @secret[index] == color # Skip full matches
+
+      unless secret_counts[color].zero?
+        half_matches += 1
+        secret_counts[color] -= 1
+      end
     end
 
     [full_matches, half_matches]
