@@ -2,59 +2,98 @@
 
 # This class implements the Mastermind gameplay loop.
 class Game
-  include Formatter
+  MAX_TURNS = 12
 
-  def initialize(code_maker, code_breaker)
-    @size = 12
-    @board = Board.new(@size)
-    @code_maker = code_maker
-    @code_breaker = code_breaker
-    @secret = @code_maker.secret
+  COLOR_HASH = {
+    'R' => :red,
+    'G' => :green,
+    'B' => :blue,
+    'C' => :cyan,
+    'M' => :magenta,
+    'Y' => :yellow
+  }.freeze
+
+  HINT_HASH = {
+    'F' => :full,
+    'H' => :half
+  }.freeze
+
+  def initialize
+    @board = Board.new(MAX_TURNS)
     @turn = 0
   end
 
   def play
-    until over?
-      puts format_board
-      guess = @code_breaker.guess(@board)
-      hint = @code_maker.hint(guess, @secret)
-      @board.update(guess, hint)
-      @turn += 1
-    end
-
-    puts format_board
-    end_screen
+    raise NotImplementedError "#{self.class} does not implement #{__method__}"
   end
 
   private
 
-  def won?
-    @board.last_guess == @secret
+  def color_input
+    loop do
+      input = gets.chomp.upcase.chars
+
+      next unless valid_color_input?(input)
+
+      return input.map { |char| COLOR_HASH[char] }
+    end
+  end
+
+  def valid_color_input?(input)
+    input.length == 4 && input.all? { |char| COLOR_HASH.key?(char) }
+  end
+
+  def hint_input
+    loop do
+      input = gets.chomp.upcase.chars
+
+      next unless valid_hint_input?(input)
+
+      return input.map { |char| HINT_HASH[char] }.sort
+    end
+  end
+
+  def valid_hint_input?(input)
+    input.length <= 4 && input.all? { |char| HINT_HASH.key?(char) }
+  end
+
+  def code_cracked?
+    @board.last_guess == @code
   end
 
   def over?
-    won? || @turn == @size
+    code_cracked? || @turn == MAX_TURNS
   end
 
-  def valid?(input)
-    input.length == 4 && input.all? { |char| Color::INPUT.include?(char) }
+  def format_code(code)
+    code.map { |color| Colors::LETTERS[color] }.join(' ')
   end
 
-  def give_hint
-    compare
-  end
+  # rubocop: disable Metrics/MethodLength
+  def compare(guess, code)
+    matches = []
+    code_counts = Hash.new(0)
 
-  def end_screen
-    if won? && @code_breaker.is_a?(Human)
-      puts 'Congrats! You cracked the secret code!'
-    elsif won? && @code_breaker.is_a?(Computer)
-      puts 'Dangit! Your secret code was cracked!'
-    elsif @code_breaker.is_a?(Human)
-      puts 'Sorry! You ran out of guesses!'
-    elsif @code_breaker.is_a?(Computer)
-      puts 'Wow! This is literally impossible!'
+    # Count full matches and build hash of remaining code colors
+    code.each_with_index do |color, index|
+      if guess[index] == color
+        matches << :full
+      else
+        code_counts[color] += 1
+      end
     end
 
-    puts "The secret code was #{format_secret(@secret)}"
+    # Count half matches from guess positions that weren't a full match
+    guess.each_with_index do |color, index|
+      next if code[index] == color # Skip full matches
+
+      unless code_counts[color].zero?
+        matches << :half
+        code_counts[color] -= 1
+      end
+    end
+
+    matches
   end
+  # rubocop: enable Metrics/MethodLength
 end
