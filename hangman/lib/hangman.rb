@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'colorize'
+require 'fileutils'
 
 # This class implements the Hangman game.
 class Hangman
@@ -38,10 +39,26 @@ class Hangman
     loop do
       input = gets.chomp.upcase
 
+      quit if input == 'QUIT'
+      save_and_quit if input == 'SAVE'
+
       return input if valid?(input)
 
       print 'Invalid input. Please try again: '
     end
+  end
+
+  def quit
+    system('clear')
+    exit
+  end
+
+  def save_and_quit
+    FileUtils.mkdir_p('saved_games')
+    file_name = Time.now.iso8601
+    File.write("saved_games/#{file_name}", Marshal.dump(self))
+
+    quit
   end
 
   def valid?(input)
