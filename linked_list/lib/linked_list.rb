@@ -13,16 +13,16 @@ class LinkedList
   def append(value)
     @size += 1
 
-    node = Node.new(value)
+    new_node = Node.new(value)
 
     if @head.nil?
-      @head = node
-      @tail = node
+      @head = new_node
+      @tail = new_node
       return self
     end
 
-    @tail.next = node
-    @tail = node
+    @tail.next = new_node
+    @tail = new_node
 
     self
   end
@@ -30,22 +30,22 @@ class LinkedList
   def prepend(value)
     @size += 1
 
-    node = Node.new(value)
+    new_node = Node.new(value)
 
     if @head.nil?
-      @head = node
-      @tail = node
+      @head = new_node
+      @tail = new_node
       return self
     end
 
-    node.next = @head
-    @head = node
+    new_node.next = @head
+    @head = new_node
 
     self
   end
 
   def at(index)
-    return nil if index >= @size
+    return nil if index.negative? || index >= @size
 
     current = @head
     index.times { current = current.next }
@@ -56,8 +56,16 @@ class LinkedList
   def pop
     return nil if @head.nil?
 
+    @size -= 1
+
     last_node = @tail
     current = @head
+
+    if @size.zero?
+      @head = nil
+      @tail = nil
+      return last_node
+    end
 
     current = current.next until current.next == @tail
 
@@ -101,11 +109,38 @@ class LinkedList
     @head.to_s
   end
 
-  def insert_at(index)
-    # TODO: implement insert_at
+  def insert_at(value, index)
+    return nil if index.negative? || index > @size
+    return prepend(value) if index.zero?
+    return append(value) if index == @size
+
+    @size += 1
+
+    new_node = Node.new(value)
+
+    prev_node = at(index - 1)
+    new_node.next = prev_node.next
+    prev_node.next = new_node
+
+    self
   end
 
   def remove_at(index)
-    # TODO: implement remove_at
+    return nil if index.negative? || index >= @size
+    return pop if index == @size - 1
+
+    @size -= 1
+
+    if index.zero?
+      prev_head = @head
+      @head = prev_head.next
+      return prev_head
+    end
+
+    prev_node = at(index - 1)
+    target = prev_node.next
+    prev_node.next = target.next
+
+    target
   end
 end
