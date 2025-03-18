@@ -3,7 +3,7 @@
 # This class implements a Hash Map data structure.
 # rubocop: disable Metrics/ClassLength
 class HashMap
-  attr_accessor :size, :capacity
+  attr_reader :size, :capacity
 
   def initialize
     @size = 0
@@ -30,12 +30,14 @@ class HashMap
     current = @buckets[index]
 
     # update value for existing key
-    until current.next.nil?
+    loop do
       if current.key == key
         current.value = value
 
         return value
       end
+
+      break if current.next.nil?
 
       current = current.next
     end
@@ -108,6 +110,18 @@ class HashMap
     @buckets = Array.new(@capacity)
   end
 
+  def keys
+    data = entries
+
+    data.map { |key, _value| key }
+  end
+
+  def values
+    data = entries
+
+    data.map { |_key, value| value }
+  end
+
   def entries
     data = []
 
@@ -123,18 +137,6 @@ class HashMap
     end
 
     data
-  end
-
-  def keys
-    data = entries
-
-    data.map { |key, _value| key }
-  end
-
-  def values
-    data = entries
-
-    data.map { |_key, value| value }
   end
 
   private
