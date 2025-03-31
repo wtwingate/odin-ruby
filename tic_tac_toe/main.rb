@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'lib/game'
+require_relative 'lib/tic_tac_toe'
 require_relative 'lib/board'
 
-game = Game.new
-game.play
+tic_tac_toe = TicTacToe.new
+tic_tac_toe.play

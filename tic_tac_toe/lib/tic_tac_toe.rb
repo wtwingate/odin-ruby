@@ -1,46 +1,44 @@
 # frozen_string_literal: true
 
-require 'io/console'
-
-class Game
+class TicTacToe
   def initialize
     @board = Board.new
     @turn = 0
   end
 
   def play
-    until over?
+    until game_over?
       puts @board
       place_mark(user_input)
       @turn += 1
     end
 
-    finish
+    game_over_message
   end
 
-  private
+  def game_over?
+    @board.winner? || @turn == 9
+  end
 
   def user_input
     loop do
-      char = $stdin.getch
+      char = gets.chomp
 
-      next unless char.match?(/[1-9]/)
+      next unless char.match?(/^[1-9]$/)
 
       number = char.to_i - 1
       return number if @board.square_empty? number
     end
   end
 
-  def place_mark(number)
-    mark = @turn.even? ? 'X' : 'O'
-    @board.place_mark(mark, number)
+  def place_mark(square_index)
+    player_mark = @turn.even? ? 'X' : 'O'
+    @board.place_mark(player_mark, square_index)
   end
 
-  def over?
-    @board.winner? || @turn == 9
-  end
+  private
 
-  def finish
+  def game_over_message
     puts @board
 
     if @board.winner?
