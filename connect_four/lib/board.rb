@@ -1,17 +1,19 @@
-#frozen_string_literal: true
+# frozen_string_literal: true
 
+# This class is responsible for the state of the game board,
+# and for checking whether the win conditions have been met.
 class Board
-  COLUMNS = 7
-  ROWS = 6
+  NUM_COLS = 7
+  NUM_ROWS = 6
   LINES = [
     [[0, 1], [0, 2], [0, 3]],
     [[1, 0], [2, 0], [3, 0]],
     [[1, 1], [2, 2], [3, 3]],
     [[1, -1], [2, -2], [3, -3]]
   ].freeze
-  
+
   def initialize
-    @grid = Array.new(COLUMNS) { Array.new(ROWS) }
+    @grid = Array.new(NUM_COLS) { Array.new(NUM_ROWS) }
   end
 
   def full?
@@ -26,8 +28,10 @@ class Board
     @grid.each_with_index do |column, x|
       column.each_with_index do |square, y|
         next if square.nil?
-        
-        return true if on_some_line?(x, y)
+
+        LINES.each do |line|
+          return true if winning_line?(line, x, y)
+        end
       end
     end
 
@@ -36,26 +40,19 @@ class Board
 
   private
 
-  def on_some_line?(x, y)
-    LINES.each do |line|
-      winning_line = true
-      line.each do |dx, dy|
-        nx = x + dx
-        ny = y + dy
+  def winning_line?(line, x, y)
+    line.each do |dx, dy|
+      nx = x + dx
+      ny = y + dy
 
-        if off_the_grid?(nx, ny) || @grid[x][y] != @grid[nx][ny]
-          winning_line = false
-          break
-        end
-      end
-
-      return true if winning_line
+      return false unless on_the_grid?(nx, ny)
+      return false unless @grid[x][y] == @grid[nx][ny]
     end
 
-    false
+    true
   end
 
-  def off_the_grid?(x, y)
-    x < 0 || x >= COLUMNS || y < 0 || y >= ROWS
+  def on_the_grid?(x, y)
+    x >= 0 && x < NUM_COLS && y >= 0 && y < NUM_ROWS
   end
 end
