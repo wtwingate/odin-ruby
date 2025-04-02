@@ -60,25 +60,90 @@ describe Board do
     end
   end
 
+  describe '#valid_move?' do
+    subject(:board) { described_class.new }
+
+    let(:token) { :foo }
+    let(:col_idx) { 0 }
+
+    context 'when the specified column is empty' do
+      before do
+        grid = Array.new(7) { Array.new(6) }
+        board.instance_variable_set(:@grid, grid)
+      end
+
+      it 'returns true' do
+        expect(board.valid_move?(col_idx)).to be true
+      end
+    end
+
+    context 'when the specified column is almost empty' do
+      before do
+        grid = Array.new(7) { Array.new(6) }
+        grid[col_idx] = [token, nil, nil, nil, nil, nil]
+        board.instance_variable_set(:@grid, grid)
+      end
+
+      it 'returns true' do
+        expect(board.valid_move?(col_idx)).to be true
+      end
+    end
+
+    context 'when the specified column is almost full' do
+      before do
+        grid = Array.new(7) { Array.new(6) }
+        grid[col_idx] = [token, token, token, token, token, nil]
+        board.instance_variable_set(:@grid, grid)
+      end
+
+      it 'returns true' do
+        expect(board.valid_move?(col_idx)).to be true
+      end
+    end
+
+    context 'when the specified column is full' do
+      before do
+        grid = Array.new(7) { Array.new(6) }
+        grid[col_idx] = Array.new(6) { token }
+        board.instance_variable_set(:@grid, grid)
+      end
+
+      it 'returns false' do
+        expect(board.valid_move?(col_idx)).to be false
+      end
+    end
+
+    context 'when given an invalid column index' do
+      it 'returns false for underflow values' do
+        expect(board.valid_move?(-1)).to be false
+      end
+
+      it 'returns false for overflow values' do
+        expect(board.valid_move?(7)).to be false
+      end
+    end
+  end
+
   describe '#full?' do
     subject(:board) { described_class.new }
 
     let(:token) { :foo }
 
-    context 'when the grid is full' do
-      before do
-        grid = Array.new(7) { Array.new(6) { token } }
-        board.instance_variable_set(:@grid, grid)
-      end
-
-      it 'returns true' do
-        expect(board).to be_full
-      end
-    end
-
     context 'when the grid is empty' do
       before do
         grid = Array.new(7) { Array.new(6) }
+        board.instance_variable_set(:@grid, grid)
+      end
+
+      it 'returns false' do
+        expect(board).not_to be_full
+      end
+    end
+
+    context 'when the grid is almost empty' do
+      before do
+        grid = Array.new(7) { Array.new(6) }
+        grid[0][0] = token
         board.instance_variable_set(:@grid, grid)
       end
 
@@ -99,69 +164,14 @@ describe Board do
       end
     end
 
-    context 'when the grid is almost empty' do
+    context 'when the grid is full' do
       before do
-        grid = Array.new(7) { Array.new(6) }
-        grid[0][0] = token
-        board.instance_variable_set(:@grid, grid)
-      end
-
-      it 'returns false' do
-        expect(board).not_to be_full
-      end
-    end
-  end
-
-  describe '#column_full?' do
-    subject(:board) { described_class.new }
-
-    let(:token) { :foo }
-    let(:col_idx) { 0 }
-
-    context 'when the specified column is full' do
-      before do
-        grid = Array.new(7) { Array.new(6) }
-        grid[col_idx] = Array.new(6) { token }
+        grid = Array.new(7) { Array.new(6) { token } }
         board.instance_variable_set(:@grid, grid)
       end
 
       it 'returns true' do
-        expect(board.column_full?(col_idx)).to be true
-      end
-    end
-
-    context 'when the specified column is empty' do
-      before do
-        grid = Array.new(7) { Array.new(6) }
-        board.instance_variable_set(:@grid, grid)
-      end
-
-      it 'returns false' do
-        expect(board.column_full?(col_idx)).to be false
-      end
-    end
-
-    context 'when the specified column is almost full' do
-      before do
-        grid = Array.new(7) { Array.new(6) }
-        grid[col_idx] = [token, token, token, token, token, nil]
-        board.instance_variable_set(:@grid, grid)
-      end
-
-      it 'returns false' do
-        expect(board.column_full?(col_idx)).to be false
-      end
-    end
-
-    context 'when the specified column is almost empty' do
-      before do
-        grid = Array.new(7) { Array.new(6) }
-        grid[col_idx] = [token, nil, nil, nil, nil, nil]
-        board.instance_variable_set(:@grid, grid)
-      end
-
-      it 'returns false' do
-        expect(board.column_full?(col_idx)).to be false
+        expect(board).to be_full
       end
     end
   end

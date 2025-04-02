@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This class is responsible for the state of the game board,
-# and for checking whether the win conditions have been met.
+# and for testing whether the game over conditions have been met.
 class Board
   NUM_COLS = 7
   NUM_ROWS = 6
@@ -17,18 +17,20 @@ class Board
   end
 
   def place_token(token, col_idx)
-    raise "Can't place token in full column" if column_full?(col_idx)
+    raise RuntimeError unless valid_move?(col_idx)
 
     token_idx = @grid[col_idx].find_index(nil)
     @grid[col_idx][token_idx] = token
   end
 
-  def full?
-    @grid.flatten.none? nil
+  def valid_move?(col_idx)
+    return false unless col_idx >= 0 && col_idx < NUM_COLS
+
+    @grid[col_idx].any? nil
   end
 
-  def column_full?(col_idx)
-    @grid[col_idx].none? nil
+  def full?
+    @grid.flatten.none? nil
   end
 
   def four_in_a_row?
