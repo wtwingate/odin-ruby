@@ -16,12 +16,19 @@ class Board
     @grid = Array.new(NUM_COLS) { Array.new(NUM_ROWS) }
   end
 
+  def place_token(token, col_idx)
+    raise "Can't place token in full column" if column_full?(col_idx)
+
+    token_idx = @grid[col_idx].find_index(nil)
+    @grid[col_idx][token_idx] = token
+  end
+
   def full?
     @grid.flatten.none? nil
   end
 
-  def column_full?(index)
-    @grid[index].none? nil
+  def column_full?(col_idx)
+    @grid[col_idx].none? nil
   end
 
   def four_in_a_row?

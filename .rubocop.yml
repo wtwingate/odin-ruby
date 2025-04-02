@@ -15,8 +15,6 @@ plugins:
 
 AllCops:
   NewCops: enable
-  Exclude:
-    - "spec_helper.rb"
 
 Naming/MethodParameterName:
   MinNameLength: 1
