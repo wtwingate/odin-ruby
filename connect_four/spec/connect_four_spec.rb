@@ -7,28 +7,28 @@ require_relative '../lib/player'
 describe ConnectFour do
   subject(:game) { described_class.new(player_one, player_two) }
 
-  let(:player_one) { Player.new('Player 1', 'X') }
-  let(:player_two) { Player.new('Player 2', 'O') }
+  let(:player_one) { Player.new(1, 'X', 'Player 1') }
+  let(:player_two) { Player.new(2, 'O', 'Player 2') }
 
-  describe '#player_input' do
+  describe '#input_move' do
     context 'when the player inputs a valid column number' do
       before do
         allow(game).to receive(:puts)
-        allow(game).to receive_messages(gets: '1', valid_input?: true)
+        allow(game).to receive_messages(gets: '1', valid_move?: true)
       end
 
       it 'prompts the player to choose a column' do
-        game.player_input
+        game.input_move
         expect(game).to have_received(:puts).with("#{player_one.name}: Choose a column (1-7):")
       end
 
       it 'gets the player input' do
-        game.player_input
+        game.input_move
         expect(game).to have_received(:gets).once
       end
 
       it 'returns the corresponding column index' do
-        expect(game.player_input).to eq(0)
+        expect(game.input_move).to eq(0)
       end
     end
 
@@ -36,31 +36,31 @@ describe ConnectFour do
       before do
         allow(game).to receive(:puts)
         allow(game).to receive(:gets).and_return('8', '7')
-        allow(game).to receive(:valid_input?).and_return(false, true)
+        allow(game).to receive(:valid_move?).and_return(false, true)
       end
 
       it 'displays an error message' do
-        game.player_input
+        game.input_move
         expect(game).to have_received(:puts).with("You can't place a token there! Try again.").once
       end
 
       it 'prompts the player to choose a column again' do
-        game.player_input
+        game.input_move
         expect(game).to have_received(:puts).with("#{player_one.name}: Choose a column (1-7):").twice
       end
 
       it 'gets the player input again' do
-        game.player_input
+        game.input_move
         expect(game).to have_received(:gets).twice
       end
 
       it 'returns the corresponding column index' do
-        expect(game.player_input).to eq(6)
+        expect(game.input_move).to eq(6)
       end
     end
   end
 
-  describe '#valid_input?' do
+  describe '#valid_move?' do
     let(:board) { instance_double(Board) }
 
     before do
@@ -71,7 +71,7 @@ describe ConnectFour do
       it 'returns true' do
         allow(board).to receive(:valid_move?).and_return(true)
         input = '1'
-        expect(game.valid_input?(input)).to be true
+        expect(game.valid_move?(input)).to be true
       end
     end
 
@@ -79,33 +79,33 @@ describe ConnectFour do
       it 'returns false' do
         allow(board).to receive(:valid_move?).and_return(false)
         input = '1'
-        expect(game.valid_input?(input)).to be false
+        expect(game.valid_move?(input)).to be false
       end
     end
 
     context 'when the player enters an invalid column number' do
       it 'returns false for numbers that are too low' do
         input = '0'
-        expect(game.valid_input?(input)).to be false
+        expect(game.valid_move?(input)).to be false
       end
 
       it 'returns false for numbers that are too high' do
         input = '8'
-        expect(game.valid_input?(input)).to be false
+        expect(game.valid_move?(input)).to be false
       end
     end
 
     context 'when the player enters a string' do
       it 'returns false' do
         input = 'duck'
-        expect(game.valid_input?(input)).to be false
+        expect(game.valid_move?(input)).to be false
       end
     end
 
     context 'when the player enters nothing' do
       it 'returns false' do
         input = ''
-        expect(game.valid_input?(input)).to be false
+        expect(game.valid_move?(input)).to be false
       end
     end
   end

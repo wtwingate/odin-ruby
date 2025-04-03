@@ -2,10 +2,10 @@
 
 # This class implements the main gameplay loop for Connect Four.
 class ConnectFour
-  def initialize(player_one, player_two)
+  def initialize(player_one = nil, player_two = nil)
     @board = Board.new
-    @player_one = player_one
-    @player_two = player_two
+    @player_one = player_one || Player.new(1, 'X')
+    @player_two = player_two || Player.new(2, 'O')
     @current_player = @player_one
   end
 
@@ -14,8 +14,8 @@ class ConnectFour
 
     loop do
       puts @board.pretty_print
-      column = player_input(@current_player)
-      @board.place_mark(@current_player.token, column)
+      move = input_move
+      @board.place_token(@current_player.token, move)
 
       break if game_over?
 
@@ -26,21 +26,21 @@ class ConnectFour
     end_message
   end
 
-  def player_input
+  def input_move
     loop do
       puts "#{@current_player.name}: Choose a column (1-7):"
 
-      input = gets.chomp
-      return input.to_i - 1 if valid_input?(input)
+      move = gets.chomp
+      return move.to_i - 1 if valid_move?(move)
 
       puts "You can't place a token there! Try again."
     end
   end
 
-  def valid_input?(input)
-    return false unless input.match?(/^[1-7]$/)
+  def valid_move?(move)
+    return false unless move.match?(/^[1-7]$/)
 
-    @board.valid_move?(input.to_i - 1)
+    @board.valid_move?(move.to_i - 1)
   end
 
   def game_over?
@@ -54,10 +54,18 @@ class ConnectFour
   private
 
   def start_message
-    # TODO
+    puts 'Welcome to Connect Four!'
+    puts "Player 1: #{@player_one.name} (#{@player_one.token})"
+    puts "Player 2: #{@player_two.name} (#{@player_two.token})"
+    puts 'Let the game begin!'
+    puts '------------------------'
   end
 
   def end_message
-    # TODO
+    if @board.four_in_a_row?
+      puts "#{@current_player.name} wins!"
+    else
+      puts "It's a draw!"
+    end
   end
 end
