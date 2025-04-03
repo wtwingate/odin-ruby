@@ -60,10 +60,10 @@ class Board
 
     puts 'CONNECT FOUR'.center((NUM_COLS * 4) + 1)
 
-    (0...NUM_ROWS).each do |x|
+    (0...NUM_ROWS).reverse_each do |x|
       puts '-' * ((NUM_COLS * 4) + 1)
       (0...NUM_COLS).each do |y|
-        token = @grid[x][y] || ' '
+        token = @grid[y][x] || ' '
         print "| #{token} "
       end
       puts '|'
