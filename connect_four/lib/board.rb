@@ -2,6 +2,13 @@
 
 # This class is responsible for the state of the game board,
 # and for testing whether the game over conditions have been met.
+#
+# NOTE: you would normally represent a 2D array as Board[rows][cols],
+# but for this game, it is easier to represent it as Board[cols][rows].
+# This is because on each turn the player chooses a column, and the token
+# drops into the lowest available row in that column. In practice,
+# this makes the game logic easier to implement, but makes our pretty_print
+# method a bit messy.
 class Board
   NUM_COLS = 7
   NUM_ROWS = 6
@@ -47,9 +54,30 @@ class Board
     false
   end
 
+  # rubocop: disable Metrics/AbcSize, Metrics/MethodLength
   def pretty_print
-    # TODO
+    system 'clear'
+
+    puts 'CONNECT FOUR'.center((NUM_COLS * 4) + 1)
+
+    (0...NUM_ROWS).each do |x|
+      puts '-' * ((NUM_COLS * 4) + 1)
+      (0...NUM_COLS).each do |y|
+        token = @grid[x][y] || ' '
+        print "| #{token} "
+      end
+      puts '|'
+    end
+    puts '-' * ((NUM_COLS * 4) + 1)
+
+    (0...NUM_COLS).each do |num|
+      print "  #{num + 1} "
+    end
+    puts
+
+    puts
   end
+  # rubocop: enable Metrics/AbcSize, Metrics/MethodLength
 
   private
 
