@@ -47,6 +47,10 @@ class Board
     false
   end
 
+  def pretty_print
+    # TODO
+  end
+
   private
 
   def winning_line?(line, x, y)

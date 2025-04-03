@@ -7,7 +7,7 @@ describe Board do
     subject(:board) { described_class.new }
 
     let(:grid) { board.instance_variable_get(:@grid) }
-    let(:token) { :foo }
+    let(:token) { 'X' }
     let(:col_idx) { 0 }
 
     context 'when the selected column is empty' do
@@ -63,7 +63,7 @@ describe Board do
   describe '#valid_move?' do
     subject(:board) { described_class.new }
 
-    let(:token) { :foo }
+    let(:token) { 'X' }
     let(:col_idx) { 0 }
 
     context 'when the specified column is empty' do
@@ -127,7 +127,7 @@ describe Board do
   describe '#full?' do
     subject(:board) { described_class.new }
 
-    let(:token) { :foo }
+    let(:token) { 'X' }
 
     context 'when the grid is empty' do
       before do
@@ -179,8 +179,8 @@ describe Board do
   describe '#four_in_a_row?' do
     subject(:board) { described_class.new }
 
-    let(:token_one) { :foo }
-    let(:token_two) { :bar }
+    let(:token_one) { 'X' }
+    let(:token_two) { 'O' }
 
     context 'when there are four tokens in a horizontal line' do
       before do

@@ -18,3 +18,6 @@ AllCops:
 
 Naming/MethodParameterName:
   MinNameLength: 1
+
+RSpec/SubjectStub:
+  Enabled: false
